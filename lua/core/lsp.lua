@@ -1,6 +1,8 @@
 vim.lsp.enable("clangd")
 vim.lsp.enable("lua_ls")
 vim.lsp.enable("basedpyright")
+vim.lsp.enable("copilot")
+-- vim.lsp.enable("ty")
 
 vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("SetupLSP", {}),
@@ -18,28 +20,18 @@ vim.api.nvim_create_autocmd("LspAttach", {
             end, { buffer = event.buf, desc = 'LSP: Toggle Inlay Hints' })
         end
 
-        -- [diagnostic inline (virtual_text)] default OFF, toggle with <leader>cd
-        do
-            local ns = vim.lsp.diagnostic.get_namespace(client.id)
-            local function set_inline(on)
-                vim.diagnostic.config({ virtual_text = on })
-                vim.diagnostic.config({ virtual_text = on }, ns)
-                vim.diagnostic.hide(ns, event.buf)
-                vim.diagnostic.show(ns, event.buf)
-            end
-            vim.b[event.buf].diag_inline = false
-            set_inline(false)
-            vim.keymap.set("n", "<leader>cd", function()
-                vim.b[event.buf].diag_inline = not vim.b[event.buf].diag_inline
-                set_inline(vim.b[event.buf].diag_inline)
-            end, { buffer = event.buf, desc = "LSP: Toggle Diagnostic Inline" })
-        end
+        -- [code action]
+        vim.keymap.set({ "n", "v" }, "<leader>ca", function()
+            vim.lsp.buf.code_action({
+                apply = true,
+                context = { only = { "quickfix" } },
+            })
+        end, { buffer = event.buf, desc = "LSP: Code Action (Quickfix)" })
 
-        -- [folding]
-        if client and client:supports_method 'textDocument/foldingRange' then
-            local win = vim.api.nvim_get_current_win()
-            vim.wo[win][0].foldexpr = 'v:lua.vim.lsp.foldexpr()'
-        end
+        -- [rename]
+        vim.keymap.set("n", "<leader>cr", function()
+            vim.lsp.buf.rename()
+        end, { buffer = event.buf, desc = "LSP: Rename" })
 
         -- [keymaps]
         vim.keymap.set("n", "gd", function()
@@ -52,6 +44,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
                 end
             end)
         end, { buffer = event.buf, desc = "LSP: Goto Definition" })
+
         vim.keymap.set("n", "gD", function()
             local win = vim.api.nvim_get_current_win()
             local width = vim.api.nvim_win_get_width(win)
@@ -65,5 +58,23 @@ vim.api.nvim_create_autocmd("LspAttach", {
             end
             vim.lsp.buf.definition()
         end, { buffer = event.buf, desc = "LSP: Goto Definition (split)" })
+
+        vim.keymap.set("n", "gi", function()
+            vim.lsp.buf.implementation()
+        end, { buffer = event.buf, desc = "LSP: Goto Implementation" })
+
+        vim.keymap.set("n", "gI", function()
+            local win = vim.api.nvim_get_current_win()
+            local width = vim.api.nvim_win_get_width(win)
+            local height = vim.api.nvim_win_get_height(win)
+            -- Mimic tmux formula: 8 * width - 20 * height
+            local value = 8 * width - 20 * height
+            if value < 0 then
+                vim.cmd("split")  -- vertical space is more: horizontal split
+            else
+                vim.cmd("vsplit") -- horizontal space is more: vertical split
+            end
+            vim.lsp.buf.implementation()
+        end, { buffer = event.buf, desc = "LSP: Goto Implementation (split)" })
     end,
 })

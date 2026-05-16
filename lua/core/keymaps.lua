@@ -18,10 +18,10 @@ map("n", "<C-w>o", "<cmd>only<CR>",   "Close other windows")
 map("n", "<C-w>d", "<cmd>close<CR>",  "Close current window")
 map("n", "<C-w>s", "<cmd>split<CR>",  "Horizontal split")
 map("n", "<C-w>v", "<cmd>vsplit<CR>", "Vertical split")
-map("n", "<C-w>=",  "<cmd>vertical resize -5<CR>", "Shrink window width")
+map("n", "<C-w>,",  "<cmd>vertical resize -5<CR>", "Shrink window width")
 map("n", "<C-w>.", "<cmd>vertical resize +5<CR>", "Increase window width")
-map("n", "<C-w>=",    "<cmd>resize +3<CR>", "Increase window height")
-map("n", "<C-w>-",  "<cmd>resize -3<CR>", "Decrease window height")
+-- map("n", "<C-w>=",    "<cmd>resize +3<CR>", "Increase window height")
+-- map("n", "<C-w>-",  "<cmd>resize -3<CR>", "Decrease window height")
 map("n", "<C-w>r", "<C-w>=", "Equalize window sizes")
 
 -- Move lines (Normal)
@@ -44,5 +44,20 @@ map("v", "<M-k>", ":m '<-2<CR>gv=gv", "Move selection up")
 map("v", ">", ">gv", "Indent selection")
 map("v", "<", "<gv", "Outdent selection")
 map("v", "=", "=gv", "Format selection")
+
+vim.keymap.set("n", "<leader>pa", function()
+  local file = vim.fn.expand("%:p")
+  if not file or file == "" then
+    vim.notify("No file name (empty buffer?)", vim.log.levels.WARN)
+    return
+  end
+
+  local lnum = vim.api.nvim_win_get_cursor(0)[1]
+  local text = string.format("%s:%d", file, lnum)
+  vim.fn.setreg("+", text)
+  vim.fn.setreg('"', text)
+
+  vim.notify("Copied: " .. text, vim.log.levels.INFO)
+end, { desc = "Copy absolute path:line to system clipboard" })
 
 return M

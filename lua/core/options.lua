@@ -9,15 +9,36 @@ vim.g.picker = "snacks"
 vim.g.transparent = false
 vim.g.bordered = false
 vim.o.winborder = "rounded"
+vim.g.clipboard = {
+    name = "OSC 52",
+    copy = {
+        ['+'] = require('vim.ui.clipboard.osc52').copy('+'),
+        ['*'] = require('vim.ui.clipboard.osc52').copy('*'),
+    },
+    paste = {
+        ['+'] = require('vim.ui.clipboard.osc52').paste('+'),
+        ['*'] = require('vim.ui.clipboard.osc52').paste('*'),
+    },
+}
 
 local opt = vim.opt
+
+function _G.custom_foldtext()
+    local line = vim.fn.getline(vim.v.foldstart)
+    local line_count = vim.v.foldend - vim.v.foldstart + 1
+
+    line = line:gsub("\t", string.rep(" ", vim.bo.tabstop))
+    line = line:gsub("^%s+", "")
+
+    return ("%s ... [%d lines folded]"):format(line, line_count)
+end
+
 -- UI/General
 opt.number = true
 opt.relativenumber = true
 opt.ignorecase = true
 opt.cursorline = true
 opt.cursorcolumn = false
-opt.clipboard = vim.env.SSH_CONNECTION and "" or "unnamedplus"
 opt.termguicolors = true
 opt.confirm = true
 opt.mouse = "a"
@@ -39,6 +60,11 @@ opt.updatetime = 200
 opt.laststatus = 3
 
 opt.sessionoptions = { "buffers", "curdir", "tabpages", "winsize", "help", "globals", "skiprtp", "folds" }
+opt.foldcolumn = "1"
+opt.foldlevel = 99
+opt.foldlevelstart = 99
+opt.foldenable = true
+opt.foldtext = "v:lua.custom_foldtext()"
 opt.shiftround = true -- Round indent
 opt.pumblend = 10 -- Popup blend
 opt.pumheight = 10 -- Maximum number of entries in a popup
@@ -54,5 +80,6 @@ opt.winminwidth = 5 -- Minimum window width
 opt.wrap = true -- Disable line wrap
 opt.undolevels = 10000
 opt.timeoutlen = 300 -- Lower than default (1000) to quickly trigger which-key
+opt.termguicolors = true
 
-vim.cmd("colorscheme murphy")
+vim.g.python3_host_prog = "/usr/bin/python"

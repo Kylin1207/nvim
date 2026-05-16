@@ -7,6 +7,9 @@ return {
                 "nvim-mini/mini.icons",
                 opts = {}
             },
+            {
+                "refractalize/oil-git-status.nvim",
+            },
         },
         lazy = false,
         config = function()
@@ -50,12 +53,12 @@ return {
                         "actions.parent",
                         mode = "n",
                     },
-                    ["<C-w>v"] = { 
+                    ["<C-w>v"] = {
                         "actions.select",
                         opts = { vertical = true },
                         desc = "Open the entry in vertical view",
                     },
-                    ["<C-w>s"] = { 
+                    ["<C-w>s"] = {
                         "actions.select",
                         opts = { horizontal = true },
                         desc = "Open the entry in horizontal view",
@@ -118,6 +121,7 @@ return {
                     end,
                 },
             })
+            require("oil-git-status").setup()
         end,
     },
 }

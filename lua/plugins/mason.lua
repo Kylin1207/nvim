@@ -11,6 +11,7 @@ return {
                 "lua_ls",
                 "clangd",
                 "basedpyright",
+                "copilot",
             },
             automatic_installation = true,
         },

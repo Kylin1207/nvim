@@ -49,6 +49,8 @@ return {
                 end
 
                 -- hunk navigation
+                buf_map("n", "]g", "<cmd>Gitsigns next_hunk<CR>", "Next hunk")
+                buf_map("n", "[g", "<cmd>Gitsigns prev_hunk<CR>", "Prev hunk")
                 buf_map("n", "<leader>gj", "<cmd>Gitsigns next_hunk<CR>", "Next hunk")
                 buf_map("n", "<leader>gk", "<cmd>Gitsigns prev_hunk<CR>", "Prev hunk")
 

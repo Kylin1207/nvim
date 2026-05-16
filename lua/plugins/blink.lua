@@ -32,6 +32,16 @@ return {
         -- See :h blink-cmp-config-keymap for defining your own keymap
         keymap = {
             preset = 'enter',
+            ["<Tab>"] = {
+                "snippet_forward",
+                function()
+                    return require("sidekick").nes_jump_or_apply()
+                end,
+                function()
+                    return vim.lsp.inline_completion.get()
+                end,
+                "fallback",
+            },
             ["<C-f>"] = { "select_and_accept"},
             ["<C-u>"] = { "scroll_documentation_up", "fallback" },
             ["<C-d>"] = { "scroll_documentation_down", "fallback" },
